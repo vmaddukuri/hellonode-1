@@ -1,13 +1,12 @@
 # use a node base image
-FROM node:7-onbuild
+FROM vijaymaddukuri/maven:latest
 
-# set maintainer
-LABEL maintainer "miiro@getintodevops.com"
+ENV http_proxy=10.131.236.9:3128 https_proxy=10.131.236.9:3128 LANG=en_US.UTF-8
 
-# set a health check
-HEALTHCHECK --interval=5s \
-            --timeout=5s \
-            CMD curl -f http://127.0.0.1:8000 || exit 1
+RUN wget https://services.gradle.org/distributions/gradle-3.4.1-bin.zip -e use_proxy=yes -e http_proxy=10.131.236.9:3128
 
-# tell docker what port to expose
-EXPOSE 8000
+RUN sudo mkdir /opt/gradle
+
+RUN sudo unzip -d /opt/gradle gradle-3.4.1-bin.zip
+
+RUN echo "export PATH=$PATH:/opt/gradle/gradle-3.4.1/bin" >> /home/jenkins/.bashrc
